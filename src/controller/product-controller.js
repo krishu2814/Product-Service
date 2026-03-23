@@ -1,13 +1,13 @@
-const ProductRepository = require('../repository/product-repository');
+const ProductService = require('../service/product-service');
 
 class ProductController {
     constructor() {
-        this.productRepository = new ProductRepository();
+        this.productService = new ProductService();
     }
     // Create Product
     async createProduct(req, res) {
         try {
-            const product = await this.productRepository.createProduct(req.body);
+            const product = await this.productService.createProduct(req.body);
 
             return res.status(201).json({
                 success: true,
@@ -28,8 +28,9 @@ class ProductController {
     // Get All Products
     async getAllProducts(req, res) {
         try {
-            const products = await this.productRepository.getAllProducts();
-
+            console.log('Query received in controller:', req.query);
+            const products = await this.productService.getAllProducts(req.query);
+            console.log('Products fetched in controller:', products);
             return res.status(200).json({
                 success: true,
                 message: 'Products fetched successfully',
@@ -49,7 +50,7 @@ class ProductController {
     // Get Product by ID
     async getProductById(req, res) {
         try {
-            const product = await this.productRepository.getProductById(req.params.id);
+            const product = await this.productService.getProductById(req.params.id);
 
             if (!product) {
                 return res.status(404).json({
@@ -80,7 +81,7 @@ class ProductController {
     // Update Product
     async updateProduct(req, res) {
         try {
-            const updatedProduct = await this.productRepository.updateProduct(
+            const updatedProduct = await this.productService.updateProduct(
                 req.params.id,
                 req.body
             );
@@ -114,7 +115,7 @@ class ProductController {
     // Delete Product
     async deleteProduct(req, res) {
         try {
-            const deletedProduct = await this.productRepository.deleteProduct(req.params.id);
+            const deletedProduct = await this.productService.deleteProduct(req.params.id);
 
             if (!deletedProduct) {
                 return res.status(404).json({

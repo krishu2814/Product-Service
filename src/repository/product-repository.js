@@ -1,6 +1,46 @@
 const Product = require('../model/product-model');
 
 class ProductRepository {
+
+    async getAllProducts(query) {
+        console.log('Query received in repository:', query);
+        let filter = {};
+
+        // search
+        if (query.search) {
+            filter.$text = { $search: query.search };
+        }
+
+        // category
+        if (query.category) {
+            filter.category = query.category;
+        }
+
+        // price filter
+        if (query.price) {
+            filter.price = {};
+            if (query.price.gte) filter.price.$gte = Number(query.price.gte);
+            if (query.price.lte) filter.price.$lte = Number(query.price.lte);
+        }
+
+        // pagination
+        const page = Number(query.page) || 1;
+        const limit = Number(query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        // sorting
+        let sort = {};
+        if (query.sort) {
+            const field = query.sort.startsWith('-') ? query.sort.substring(1) : query.sort;
+            sort[field] = query.sort.startsWith('-') ? -1 : 1;
+        }
+        console.log('Filter:', filter);
+
+        return await Product.find(filter)
+            .sort(sort)
+            .skip(skip)
+            .limit(limit);
+    }   
     
     // Create Product
     async createProduct(data) {
@@ -36,14 +76,6 @@ class ProductRepository {
     async deleteProduct(id) {
         try {
             return await Product.findByIdAndDelete(id);
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async getAllProducts() {
-        try {
-            return await Product.find({});
         } catch (error) {
             throw error;
         }
