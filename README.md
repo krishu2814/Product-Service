@@ -1,199 +1,319 @@
-# 📦 Product Service (Microservice)
+# 🛒 E-Commerce Microservices Platform
 
-A scalable **Product Management Service** built using **Node.js, Express, and MongoDB**, designed as a core component of a **microservices-based e-commerce system**.
+A production-inspired **E-Commerce Backend System** built using **Node.js, Express.js, MongoDB, JWT Authentication, and Microservices Architecture**.
 
-This service is responsible for managing the **product catalog**, including CRUD operations, inventory tracking, and search functionality.
-
----
-
-## 🚀 Features
-
-* ➕ Create Products
-* 📄 Fetch All Products
-* 🔍 Get Product by ID
-* ✏️ Update Product Details
-* ❌ Delete Products
-* 📦 Inventory Management (Stock)
-* 🔎 Full-Text Search (MongoDB Indexing)
-* ⭐ Ratings & Reviews Metadata
+The platform is designed following real-world distributed system principles where independent services communicate through REST APIs behind a centralized API Gateway.
 
 ---
 
-## 🏗️ Tech Stack
+## 🚀 Core Features
 
-* **Backend:** Node.js, Express.js
-* **Database:** MongoDB (Mongoose ODM)
-* **Architecture:** Microservices
-* **Search:** MongoDB Text Index
-* **Version Control:** Git & GitHub
+### 🔐 Authentication & Authorization
 
----
+* JWT-based Authentication
+* Secure Login & Registration
+* Password Hashing using Bcrypt
+* Role-Based Access Control (RBAC)
 
-## 📂 Project Structure
+### 👥 User Roles
 
-```id="c7k29s"
-product-service/
-│
-├── src/
-│   ├── controller/
-│   │   └── product-controller.js
-│   ├── routes/
-│   │   └── v1/
-│   │       └── product-routes.js
-│   ├── models/
-│   │   └── product-model.js
-│   ├── services/
-│   ├── repository/
-│   └── config/
-│
-├── package.json
-├── .env
-└── README.md
-```
+| Role     | Permissions                                               |
+| -------- | --------------------------------------------------------- |
+| Customer | Browse products, manage cart, place orders, make payments |
+| Vendor   | Create and manage own products                            |
+| Admin    | Manage users, products, orders, and platform operations   |
 
 ---
 
-## ⚙️ API Endpoints
+## 🏗️ Microservices Architecture
 
-### 📦 Product APIs
+The system is divided into independent services:
 
-| Method | Endpoint        | Description       |
-| ------ | --------------- | ----------------- |
-| POST   | `/products`     | Create a product  |
-| GET    | `/products`     | Get all products  |
-| GET    | `/products/:id` | Get product by ID |
-| PATCH  | `/products/:id` | Update product    |
-| DELETE | `/products/:id` | Delete product    |
+### 📦 Product Service
 
----
+* Product CRUD Operations
+* Inventory Management
+* Category Management
+* Full Text Search
+* Filtering, Sorting & Pagination
 
-## 🧠 Data Model
+### 🛒 Cart Service
 
-```js id="g72ksl"
-{
-  name: String,          // unique product name
-  description: String,   // product details
-  price: Number,         // product price
-  category: String,      // product category
-  brand: String,         // brand name
-  stock: Number,         // inventory count
-  images: [String],      // product images
-  rating: Number,        // average rating (0-5)
-  numReviews: Number     // total reviews count
-}
-```
----
+* Add Products to Cart
+* Update Cart Quantity
+* Remove Cart Items
+* Clear Cart
+* Cart Total Calculation
+* Product Validation via Product Service
 
-## 🛠️ Installation & Setup
+### 📋 Order Service
 
-### 1️⃣ Clone the Repository
+* Create Orders from Cart
+* Order Tracking
+* Order Status Management
+* Payment Status Tracking
+* Order History
 
-```bash id="k29sll"
-git clone https://github.com/your-username/product-service.git
-cd product-service
-```
+### 💳 Payment Service
 
-### 2️⃣ Install Dependencies
+* Payment Processing Workflow
+* Order Validation Before Payment
+* Duplicate Payment Prevention
+* Transaction Tracking
+* Order Status Synchronization
+* Automatic Cart Cleanup After Successful Payment
 
-```bash id="l92ksl"
-npm install
-```
+### 🚪 API Gateway
 
-### 3️⃣ Environment Variables
-
-Create a `.env` file:
-
-```id="p82lsl"
-PORT=4000
-MONGO_URI=your_mongodb_connection_string
-```
+* Single Entry Point for Clients
+* Request Routing
+* Authentication Middleware
+* Authorization Layer
+* Service Isolation
+* Scalability Support
 
 ---
 
-### 4️⃣ Run the Server
+## 🧠 System Flow
 
-```bash id="z82lsl"
-npm start
-```
+### Product Purchase Journey
+
+1. Customer logs in and receives JWT Token
+2. Customer browses products
+3. Product added to Cart Service
+4. Cart validates product from Product Service
+5. Customer creates Order
+6. Order Service stores order with `PENDING` status
+7. Customer initiates Payment
+8. Payment Service validates Order
+9. Payment succeeds
+10. Order updated to `PLACED`
+11. Cart is automatically cleared
+12. Order moves through lifecycle:
+
+    * PENDING
+    * PLACED
+    * CONFIRMED
+    * DELIVERED
 
 ---
 
-## 🧪 Testing
+## 🛠️ Tech Stack
 
-Test APIs using:
+### Backend
+
+* Node.js
+* Express.js
+
+### Database
+
+* MongoDB Atlas
+* Mongoose ODM
+
+### Authentication
+
+* JWT
+* Bcrypt
+
+### Communication
+
+* REST APIs
+* Axios (Inter-Service Communication)
+
+### Architecture
+
+* Microservices
+* API Gateway Pattern
+* Repository Pattern
+* Service Layer Pattern
+
+### Tools
 
 * Postman
-* Thunder Client
-* Mongodb Compass
-* Mongodb Atlas
+* MongoDB Compass
+* Git
+* GitHub
+
+---
+
+## 📂 Services Structure
+
+```bash
+ecommerce-platform/
+
+├── api-gateway/
+│
+├── auth-service/
+│
+├── product-service/
+│
+├── cart-service/
+│
+├── order-service/
+│
+├── payment-service/
+│
+└── shared/
+```
+
+---
+
+## ⚙️ Major Implementations
+
+### Product Service
+
+* CRUD APIs
+* Search
+* Filtering
+* Pagination
+* Sorting
+* Inventory Tracking
+
+### Authentication Service
+
+* Signup/Login
+* JWT Generation
+* Password Encryption
+* Role Management
+
+### Cart Service
+
+* Product Validation
+* Quantity Updates
+* Price Calculation
+* Cart Management
+
+### Order Service
+
+* Order Creation
+* Status Tracking
+* Delivery Information
+* Order History
+
+### Payment Service
+
+* Payment Validation
+* Transaction Generation
+* Duplicate Payment Protection
+* Order Synchronization
+
+### API Gateway
+
+* Route Aggregation
+* Centralized Authentication
+* Request Forwarding
+* Security Layer
+
+---
+
+## 📊 Database Design
+
+### Product
+
+```js
+{
+  name,
+  description,
+  price,
+  category,
+  brand,
+  stock,
+  images,
+  rating,
+  numReviews
+}
+```
+
+### Cart
+
+```js
+{
+  userId,
+  items: [
+    {
+      productId,
+      quantity,
+      price
+    }
+  ],
+  totalPrice
+}
+```
+
+### Order
+
+```js
+{
+  userId,
+  orderNumber,
+  items,
+  totalAmount,
+  orderStatus,
+  paymentStatus,
+  transactionId,
+  deliveryAddress
+}
+```
+
+### Payment
+
+```js
+{
+  orderId,
+  userId,
+  amount,
+  paymentMethod,
+  status,
+  transactionId
+}
+```
+
+---
+
+## 🔒 Security Features
+
+* JWT Authentication
+* Password Hashing (Bcrypt)
+* RBAC Authorization
+* Protected Routes
+* Service-Level Validation
+* Input Validation
+* Error Handling Middleware
 
 ---
 
 ## 📈 Future Enhancements
 
-* 🔐 Admin Authentication & Authorization
-* 📊 Pagination, Filtering, Sorting
-* ⚡ Redis Caching
-* ☁️ Image Upload (AWS S3 / Cloudinary)
-* 🔎 ElasticSearch Integration
-* 🧠 AI-based Recommendations
+* Redis Caching
+* RabbitMQ Event Bus
+* Stripe/Razorpay Integration
+* Docker & Kubernetes Deployment
+* Elasticsearch
+* AWS S3 Product Images
+* Notification Service
+* Recommendation Engine
 
 ---
 
-## 🌐 Role in Microservices Architecture
+## 🎯 What This Project Demonstrates
 
-This service works as part of a larger system:
-
-* Product Service ✅
-* User Service ✅
-* Order Service ✅
-* Cart Service 🚧
-* Payment Service 🚧
-* API Gateway 🚧
-
----
-
-## 🧪 Best Practices
-
-* ✅ RESTful API Design
-* ✅ MVC Architecture
-* ✅ Separation of Concerns
-* ✅ Schema Validation (Mongoose)
-* ✅ Index Optimization
-* ✅ Clean & Maintainable Code
+* Backend Engineering
+* Distributed Systems Design
+* Microservices Architecture
+* API Gateway Implementation
+* Secure Authentication & Authorization
+* Inter-Service Communication
+* Database Design
+* Scalable E-Commerce System Development
 
 ---
 
-## 💼 Why This Project?
+## 👨‍💻 Author
 
-This project showcases:
+Krishu Kumar
 
-* Backend development expertise
-* Real-world product system design
-* Microservices architecture understanding
-* Database modeling and indexing skills
+GitHub:
+https://github.com/krishu2814
 
----
-
-## 🤝 Contributing
-
-```bash id="x92lsl"
-# Fork the repository
-git checkout -b feature/YourFeature
-
-# Make changes
-git commit -m "Add feature"
-
-# Push changes
-git push origin feature/YourFeature
-```
-
----
-
-## 📬 Contact
-
-**Krishu Kumar**  
-📧 Email: [krishukumarsingh06@gmail.com](mailto:krishukumarsingh06@gmail.com)  
-🐙 GitHub: https://github.com/krishu2814
-
----
+Email:
+[krishukumarsingh06@gmail.com](mailto:krishukumarsingh06@gmail.com)
