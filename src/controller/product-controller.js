@@ -8,7 +8,6 @@ class ProductController {
     async createProduct(req, res) {
         try {
             const product = await this.productService.createProduct(req.body);
-
             return res.status(201).json({
                 success: true,
                 message: 'Product created successfully',
@@ -30,7 +29,7 @@ class ProductController {
         try {
             console.log('Query received in controller:', req.query);
             const products = await this.productService.getAllProducts(req.query);
-            console.log('Products fetched in controller:', products);
+            // console.log('Products fetched in controller:', products);
             return res.status(200).json({
                 success: true,
                 message: 'Products fetched successfully',
@@ -115,8 +114,9 @@ class ProductController {
     // Delete Product
     async deleteProduct(req, res) {
         try {
+            console.log(req.params.id);
             const deletedProduct = await this.productService.deleteProduct(req.params.id);
-
+            console.log('Deleted product:', deletedProduct);
             if (!deletedProduct) {
                 return res.status(404).json({
                     success: false,

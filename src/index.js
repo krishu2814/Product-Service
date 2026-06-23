@@ -3,9 +3,11 @@ const app = express();
 const { PORT } = require('./config/serverConfig');
 const connectDB = require('./config/database');
 const v1routes = require('./routes/index');
+const attachUser = require('./utils/User-Role');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(attachUser);
 
 // Use API routes
 app.use('/api', v1routes);
