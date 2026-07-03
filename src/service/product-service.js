@@ -27,9 +27,9 @@ class ProductService {
 
     async getAllProducts(query) {
         try {
-            console.log('Query received in service:', query);
+            // console.log('Query received in service:', query);
             const products = await this.productRepository.getAllProducts(query);
-            console.log('Products fetched in service:', products);
+            // console.log('Products fetched in service:', products);
             return products;
         } catch (error) {
             console.error('Error fetching all products:', error);

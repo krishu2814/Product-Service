@@ -27,7 +27,7 @@ class ProductController {
     // Get All Products
     async getAllProducts(req, res) {
         try {
-            console.log('Query received in controller:', req.query);
+            // console.log('Query received in controller:', req.query);
             const products = await this.productService.getAllProducts(req.query);
             // console.log('Products fetched in controller:', products);
             return res.status(200).json({
@@ -114,9 +114,9 @@ class ProductController {
     // Delete Product
     async deleteProduct(req, res) {
         try {
-            console.log(req.params.id);
+            // console.log(req.params.id);
             const deletedProduct = await this.productService.deleteProduct(req.params.id);
-            console.log('Deleted product:', deletedProduct);
+            // console.log('Deleted product:', deletedProduct);
             if (!deletedProduct) {
                 return res.status(404).json({
                     success: false,
