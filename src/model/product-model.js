@@ -32,12 +32,13 @@ const productSchema = new mongoose.Schema({
         trim: true
     },
 
-    stock: {
-        type: Number,
-        required: true,
-        min: 0,
-        default: 0
-    },
+    // Inventory Service maintains stock information
+    // stock: {
+    //     type: Number,
+    //     required: true,
+    //     min: 0,
+    //     default: 0
+    // },
 
     // multiple images for a product
     images: [
