@@ -22,12 +22,21 @@ const getChannel = () => {
     return channel;
 };
 
-const publishEvent = async (routingKey, data) => {
+const crypto = require('crypto');
+
+const publishEvent = async (routingKey, data, options = {}) => {
     try {
         if (!channel) {
             console.warn(`Cannot publish ${routingKey}: RabbitMQ channel not initialized`);
             return;
         }
+
+        const correlationId =
+            options.correlationId ||
+            data.correlationId ||
+            `amqp_${crypto.randomUUID()}`;
+
+        data.correlationId = correlationId;
 
         channel.publish(
             EXCHANGE_NAME,
@@ -36,10 +45,15 @@ const publishEvent = async (routingKey, data) => {
             {
                 persistent: true,
                 contentType: 'application/json',
+                correlationId,
+                headers: {
+                    'x-correlation-id': correlationId,
+                    ...(options.headers || {}),
+                },
             }
         );
 
-        console.log(`Event published: ${routingKey}`);
+        console.log(`[${correlationId}] [Product-Service] Event published: ${routingKey}`);
     } catch (error) {
         console.error(`Failed to publish event ${routingKey}:`, error.message);
     }

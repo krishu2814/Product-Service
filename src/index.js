@@ -8,6 +8,7 @@ const attachUser = require('./utils/User-Role');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(require('./middleware/correlation-middleware'));
 app.use(attachUser);
 
 // Use API routes
