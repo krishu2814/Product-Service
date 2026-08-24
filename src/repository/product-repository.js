@@ -32,8 +32,18 @@ class ProductRepository {
 
       sort[field] = query.sort.startsWith("-") ? -1 : 1;
     }
-    // console.log("Filter:", filter);
-    return await Product.find(filter).sort(sort).skip(skip).limit(limit);
+    const total = await Product.countDocuments(filter);
+    const products = await Product.find(filter).sort(sort).skip(skip).limit(limit);
+
+    return {
+      products,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+    };
   }
 
   async createProduct(data) {

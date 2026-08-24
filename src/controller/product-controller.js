@@ -15,11 +15,15 @@ class ProductController {
                 err: {}
             });
         } catch (error) {
-            return res.status(400).json({
+            const isDuplicate = error.code === 11000 || error.message.includes('E11000');
+            const statusCode = isDuplicate ? 409 : 400;
+            const message = isDuplicate ? 'A product with this name already exists' : error.message;
+
+            return res.status(statusCode).json({
                 success: false,
-                message: error.message,
+                message,
                 data: {},
-                err: error
+                err: error.message
             });
         }
     }
@@ -27,13 +31,12 @@ class ProductController {
     // Get All Products
     async getAllProducts(req, res) {
         try {
-            // console.log('Query received in controller:', req.query);
-            const products = await this.productService.getAllProducts(req.query);
-            // console.log('Products fetched in controller:', products);
+            const result = await this.productService.getAllProducts(req.query);
             return res.status(200).json({
                 success: true,
                 message: 'Products fetched successfully',
-                data: products,
+                data: result.products,
+                pagination: result.pagination,
                 err: {}
             });
         } catch (error) {

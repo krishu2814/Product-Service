@@ -1,4 +1,5 @@
 const ProductRepository = require("../repository/product-repository");
+const { publishEvent } = require("../config/rabbitmq");
 
 class ProductService {
   constructor() {
@@ -8,6 +9,16 @@ class ProductService {
   async createProduct(data) {
     try {
       const product = await this.productRepository.createProduct(data);
+
+      // Publish PRODUCT_CREATED event to automatically initialize stock in Inventory-Service
+      const initialStock = Number(data.stock) >= 0 ? Number(data.stock) : 0;
+      await publishEvent("PRODUCT_CREATED", {
+        event: "PRODUCT_CREATED",
+        productId: product._id.toString(),
+        quantity: initialStock,
+        timestamp: new Date().toISOString(),
+      });
+
       return product;
     } catch (error) {
       console.error("Error creating product:", error);
@@ -27,8 +38,8 @@ class ProductService {
 
   async getAllProducts(query) {
     try {
-      const products = await this.productRepository.getAllProducts(query);
-      return products;
+      const result = await this.productRepository.getAllProducts(query);
+      return result;
     } catch (error) {
       console.error("Error fetching all products:", error);
       throw error;
@@ -51,6 +62,15 @@ class ProductService {
   async deleteProduct(id) {
     try {
       const deletedProduct = await this.productRepository.deleteProduct(id);
+
+      if (deletedProduct) {
+        // Publish PRODUCT_DELETED event to clean up Inventory-Service records
+        await publishEvent("PRODUCT_DELETED", {
+          event: "PRODUCT_DELETED",
+          productId: id.toString(),
+          timestamp: new Date().toISOString(),
+        });
+      }
 
       return deletedProduct;
     } catch (error) {
