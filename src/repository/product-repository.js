@@ -10,13 +10,15 @@ class ProductRepository {
     if (query.category) {
       filter.category = query.category;
     }
-    if (query.price) {
+    const minPrice = query.minPrice !== undefined ? query.minPrice : query.price?.gte;
+    const maxPrice = query.maxPrice !== undefined ? query.maxPrice : query.price?.lte;
+    if (minPrice !== undefined || maxPrice !== undefined) {
       filter.price = {};
-      if (query.price.gte) {
-        filter.price.$gte = Number(query.price.gte);
+      if (minPrice !== undefined && minPrice !== "") {
+        filter.price.$gte = Number(minPrice);
       }
-      if (query.price.lte) {
-        filter.price.$lte = Number(query.price.lte);
+      if (maxPrice !== undefined && maxPrice !== "") {
+        filter.price.$lte = Number(maxPrice);
       }
     }
 

@@ -17,7 +17,7 @@ const RoleAuthorization = (...Roles) => {
             }
         }
 
-        if (!req.user) {
+        if (!req.user || !req.user.role) {
             return res.status(401).json({
                 success: false,
                 message: 'Unauthorized: Authentication required'
