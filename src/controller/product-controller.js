@@ -1,4 +1,5 @@
 const ProductService = require("../service/product-service");
+const { NotFoundError } = require("../utils/errors/app-error");
 
 class ProductController {
   constructor() {
@@ -6,7 +7,7 @@ class ProductController {
   }
 
   // Create Product
-  async createProduct(req, res) {
+  async createProduct(req, res, next) {
     try {
       const product = await this.productService.createProduct(req.body);
       return res.status(201).json({
@@ -16,24 +17,12 @@ class ProductController {
         err: {},
       });
     } catch (error) {
-      const isDuplicate =
-        error.code === 11000 || error.message.includes("E11000");
-      const statusCode = isDuplicate ? 409 : 400;
-      const message = isDuplicate
-        ? "A product with this name already exists"
-        : error.message;
-
-      return res.status(statusCode).json({
-        success: false,
-        message,
-        data: {},
-        err: error.message,
-      });
+      next(error);
     }
   }
 
   // Get All Products
-  async getAllProducts(req, res) {
+  async getAllProducts(req, res, next) {
     try {
       const result = await this.productService.getAllProducts(req.query);
 
@@ -48,27 +37,17 @@ class ProductController {
         err: {},
       });
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-        data: {},
-        err: error,
-      });
+      next(error);
     }
   }
 
   // Get Product by ID
-  async getProductById(req, res) {
+  async getProductById(req, res, next) {
     try {
       const result = await this.productService.getProductById(req.params.id);
 
       if (!result.data) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found",
-          data: {},
-          err: {},
-        });
+        throw new NotFoundError(`Product not found with ID: ${req.params.id}`, "PRODUCT_NOT_FOUND");
       }
 
       res.setHeader("X-Cache", result.isFromCache ? "HIT" : "MISS");
@@ -81,17 +60,12 @@ class ProductController {
         err: {},
       });
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-        data: {},
-        err: error,
-      });
+      next(error);
     }
   }
 
   // Update Product
-  async updateProduct(req, res) {
+  async updateProduct(req, res, next) {
     try {
       const updatedProduct = await this.productService.updateProduct(
         req.params.id,
@@ -99,12 +73,7 @@ class ProductController {
       );
 
       if (!updatedProduct) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found",
-          data: {},
-          err: {},
-        });
+        throw new NotFoundError(`Product not found with ID: ${req.params.id}`, "PRODUCT_NOT_FOUND");
       }
 
       return res.status(200).json({
@@ -114,29 +83,19 @@ class ProductController {
         err: {},
       });
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-        data: {},
-        err: error,
-      });
+      next(error);
     }
   }
 
   // Delete Product
-  async deleteProduct(req, res) {
+  async deleteProduct(req, res, next) {
     try {
       const deletedProduct = await this.productService.deleteProduct(
         req.params.id,
       );
 
       if (!deletedProduct) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found",
-          data: {},
-          err: {},
-        });
+        throw new NotFoundError(`Product not found with ID: ${req.params.id}`, "PRODUCT_NOT_FOUND");
       }
 
       return res.status(200).json({
@@ -146,12 +105,7 @@ class ProductController {
         err: {},
       });
     } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-        data: {},
-        err: error,
-      });
+      next(error);
     }
   }
 }

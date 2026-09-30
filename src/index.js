@@ -14,6 +14,10 @@ app.use(attachUser);
 // Use API routes
 app.use('/api', v1routes);
 
+// Global Error & 404 Handlers
+app.use(require('./middleware/not-found-handler'));
+app.use(require('./middleware/error-handler'));
+
 const setUpAndStartServer = async () => {
     // Connect to MongoDB
     await connectDB();
